@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
@@ -137,6 +138,7 @@ public class MMHS26Lib {
 
     //Optional flag(s) to enable internal debugging tools
     @Config
+    @Configurable
     public static class debug {
         //debug telemetry has to be static to appear on ftc dashboard
         public static boolean debugTelemetry = false;
