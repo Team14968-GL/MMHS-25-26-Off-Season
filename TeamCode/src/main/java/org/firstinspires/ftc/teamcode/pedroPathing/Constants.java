@@ -37,6 +37,7 @@ public class Constants {
                             0.01
                     )
             )
+            // TODO: 3/3/2026 everything below this point in follower constants in untuned and at default values
             .drivePIDFCoefficients( //Adjusts how the robot moves forwards and backwards to correct it's x-error? more testing needed to confirm
                     new FilteredPIDFCoefficients(
                             0.1,
