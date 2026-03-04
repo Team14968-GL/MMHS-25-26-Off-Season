@@ -18,6 +18,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(10.8862) //mass in Kilos
+
             .forwardZeroPowerAcceleration(-44.792129192214446) //Deceleration on the forward axis
             .lateralZeroPowerAcceleration(-93.72450685019226) //Deceleration on the lateral axis
 
@@ -42,7 +43,7 @@ public class Constants {
                     new FilteredPIDFCoefficients(
                             0.1,
                             0.0,
-                            0.01,
+                            0.005,
                             0.6,
                             0.0
                     )
@@ -68,7 +69,7 @@ public class Constants {
             .yVelocity(52.49261234313485); //Velocity on the lateral axis
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(0.625000528) //Inches from center of rotation on it's respective axis
+            .forwardPodY(0.625000528 + 3) //Inches from center of rotation on it's respective axis
             .strafePodX(5.1349999548) //^^^
             .distanceUnit(DistanceUnit.INCH) //Unit for measuring distance
             .hardwareMapName("pinpoint") //Hardware map setup for Pedro Pathing localizer
