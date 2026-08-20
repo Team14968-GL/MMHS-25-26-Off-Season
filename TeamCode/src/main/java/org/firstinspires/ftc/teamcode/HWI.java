@@ -37,6 +37,10 @@ public class HWI { //HWI = Hardware Interface
 			RobotLog.ii("HWI", "OpMode not provided, please check HWI's initialization statement.");
 		}
 	}
+	
+	public void DebugMode(boolean isEnabled) {
+		debug = Enabled
+	}
 
 	public void init() {
 
@@ -103,21 +107,19 @@ public class HWI { //HWI = Hardware Interface
 	}
 
 	public void drive(double linear, double lateral, double rotational, double speed) {
+		linear = Utils.clamp(linear, 0, 1);
+		lateral = Utils.clamp(lateral, 0, 1);
+		rotational = Utils.clamp(rotational, 0, 1);
 		speed = Utils.clamp(speed, 0, 1);
 		leftFront.setPower(((linear + lateral) - rotational) * speed);
 		leftBack.setPower((linear - lateral - rotational) * speed);
 		rightFront.setPower(((linear + lateral) + rotational) * speed);
 		rightBack.setPower(((linear - lateral) + rotational) * speed);
-		Utils.sleep(100);
 	}
 
 	public void launcherSpeed(double power) {
 		leftLauncher.setPower(power);
 		rightLauncher.setPower(power);
-	}
-
-	public boolean a() {
-		return true;
 	}
 
 	private static class Utils {
