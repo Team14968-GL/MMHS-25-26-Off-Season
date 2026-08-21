@@ -2,9 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.teamcode.HWI.*;
 
 @TeleOp
-public class HWIExampleImlementation extends OpMode {
+public class HWIExampleImplementation extends OpMode {
     HWI robot = new HWI(this);
 
     @Override
@@ -14,6 +15,6 @@ public class HWIExampleImlementation extends OpMode {
 
     @Override
     public void loop() {
-        robot.drive(gamepad1.right_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x, 0.7);
+        robot.velocityDrive(gamepad1.right_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x, 500, 28, 0.2);
     }
 }
