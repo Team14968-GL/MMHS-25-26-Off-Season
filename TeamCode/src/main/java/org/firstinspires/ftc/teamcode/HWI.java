@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class HWI { //HWI = Hardware Interface
-	private OpMode OpMode;
+	private static OpMode OpMode;
 	private LinearOpMode Linear;
 	private boolean debug;
 
@@ -27,7 +28,7 @@ public class HWI { //HWI = Hardware Interface
 	private Limelight3A limelight;
 	@SuppressWarnings("FieldCanBeLocal")
 	private TouchSensor topBump, bottomBump, intakeBump1, intakeBump2;
-	private ArrayList<CRServo> leds;
+	private ArrayList<CRServo> LEDs;
 	private CRServo LED1;
 
 	//HWI name = new HWI(this);
@@ -52,7 +53,7 @@ public class HWI { //HWI = Hardware Interface
 		rightFront = OpMode.hardwareMap.get(DcMotorEx.class, "rightFront");
 		//Intake Definitions
 		intakeMotor = OpMode.hardwareMap.get(DcMotorEx.class, "intakeMotor");
-		frontDoor = OpMode.hardwareMap.get(Servo.class, "goofyAhhhhFrontDoor");
+		frontDoor = OpMode.hardwareMap.get(Servo.class, "kicker");
 		intakeBump1 = OpMode.hardwareMap.get(TouchSensor.class, "intakeBump1");
 		intakeBump2 = OpMode.hardwareMap.get(TouchSensor.class, "intakeBump2");
 		//Launcher Definitions
@@ -60,8 +61,8 @@ public class HWI { //HWI = Hardware Interface
 		rightLauncher = OpMode.hardwareMap.get(DcMotorEx.class, "rightLauncher");
 		launchLiftRight = OpMode.hardwareMap.get(CRServo.class, "launchLiftRight");
 		launchLiftLeft = OpMode.hardwareMap.get(CRServo.class, "launchLiftLeft");
-		topBump = OpMode.hardwareMap.get(TouchSensor.class, "TopBump");
-		bottomBump = OpMode.hardwareMap.get(TouchSensor.class, "BottomBump");
+		topBump = OpMode.hardwareMap.get(TouchSensor.class, "topBump");
+		bottomBump = OpMode.hardwareMap.get(TouchSensor.class, "bottomBump");
 		backDoor = OpMode.hardwareMap.get(Servo.class, "backDoor");
 		scoop = OpMode.hardwareMap.get(Servo.class, "scoop");
 		//Lift/Skis Definition
@@ -100,7 +101,7 @@ public class HWI { //HWI = Hardware Interface
 		pinpoint.initialize(); //Initializes odometry for use in code
 		pinpoint.update();
 		//LED Config
-		leds = new ArrayList<>(Arrays.asList(null, LED1)); //creates a list of LEDs for ledManager to use
+		LEDs = new ArrayList<>(Arrays.asList(null, LED1)); //creates a list of LEDs for ledManager to use
 		//Limelight Config/Setup
 		limelight.pipelineSwitch(0); //Sets the config the limelight should use
 		limelight.setPollRateHz(100); //Limelight data polling rate
@@ -108,10 +109,10 @@ public class HWI { //HWI = Hardware Interface
 	}
 
 	public void drive(double linear, double lateral, double rotational, double speed) {
-		linear = Utils.clamp(linear, 0, 1);
-		lateral = Utils.clamp(lateral, 0, 1);
-		rotational = Utils.clamp(rotational, 0, 1);
-		speed = Utils.clamp(speed, 0, 1);
+		linear = Utils.clamp(linear, -1, 1);
+		lateral = Utils.clamp(lateral, -1, 1);
+		rotational = Utils.clamp(rotational, -1, 1);
+		speed = Utils.clamp(speed, -1, 1);
 		leftFront.setPower(((linear + lateral) - rotational) * speed);
 		leftBack.setPower((linear - lateral - rotational) * speed);
 		rightFront.setPower(((linear + lateral) + rotational) * speed);
@@ -119,10 +120,11 @@ public class HWI { //HWI = Hardware Interface
 	}
 
 	public void velocityDrive(double linear, double lateral, double rotational, double RPM , int ticksPerRev, double gearRatio) {
-		linear = Utils.clamp(linear, 0, 1);
-		lateral = Utils.clamp(lateral, 0, 1);
-		rotational = Utils.clamp(rotational, 0, 1);
-		double TPS = (RPM / 60) * (ticksPerRev * gearRatio);
+		Utils.ifLog(debug, "LIN + LAT + ROT + RPM + TPR + GR", String.valueOf(linear) + " " + String.valueOf(lateral) + " " + String.valueOf(rotational) + " " + String.valueOf(RPM) + " " + String.valueOf(ticksPerRev) + " " + String.valueOf(gearRatio));
+		linear = Utils.clamp(linear, -1, 1);
+		lateral = Utils.clamp(lateral, -1, 1);
+		rotational = Utils.clamp(rotational, -1, 1);
+		double TPS = ((RPM / 60) * ticksPerRev) / gearRatio;
 		leftFront.setVelocity(((linear + lateral) - rotational) * TPS);
 		leftBack.setVelocity((linear - lateral - rotational) * TPS);
 		rightFront.setVelocity(((linear + lateral) + rotational) * TPS);
@@ -130,6 +132,7 @@ public class HWI { //HWI = Hardware Interface
 	}
 
 	public void launcherSpeed(double power) {
+		Utils.ifLog(debug, "LaunchPwrPC", String.valueOf(power));
 		power = Utils.clamp(power, -1, 1);
 		leftLauncher.setPower(power);
 		rightLauncher.setPower(power);
@@ -137,7 +140,9 @@ public class HWI { //HWI = Hardware Interface
 
 	public void launcherVelocity(double RPM, double gearRatio, int ticksPerRev) {
 		//converts RPM to the ticks per second required by
-		double TPS = (RPM / 60) * (ticksPerRev * gearRatio);
+		Utils.ifLog(debug, "VelLaunchRPM", String.valueOf(RPM));
+		double TPS = ((RPM / 60) * ticksPerRev) / gearRatio;
+		Utils.ifLog(debug, "VelLaunchTPS", String.valueOf(TPS));
 		leftLauncher.setVelocity(TPS);
 		rightLauncher.setVelocity(TPS);
 	}
@@ -155,6 +160,11 @@ public class HWI { //HWI = Hardware Interface
 				Thread.sleep(milliseconds);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
+			}
+		}
+		private static void ifLog(boolean IF, String caption, String data){
+			if (IF) {
+				RobotLog.dd(caption, data);
 			}
 		}
 	}

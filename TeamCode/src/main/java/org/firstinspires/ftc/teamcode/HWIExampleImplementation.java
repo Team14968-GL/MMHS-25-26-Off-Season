@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.HWI.*;
+import com.qualcomm.hardware.lynx.commands.standard.LynxSetModuleLEDColorCommand;
 
 @TeleOp
 public class HWIExampleImplementation extends OpMode {
@@ -15,6 +16,6 @@ public class HWIExampleImplementation extends OpMode {
 
     @Override
     public void loop() {
-        robot.velocityDrive(gamepad1.right_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x, 500, 28, 0.2);
+        robot.velocityDrive(gamepad1.right_stick_y, gamepad1.right_stick_x, gamepad1.left_stick_x, 2000, 28, 0.2);
     }
 }
