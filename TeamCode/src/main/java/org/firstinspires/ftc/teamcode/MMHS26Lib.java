@@ -42,7 +42,7 @@ public class MMHS26Lib {
     private static Limelight3A limelight;
     @SuppressWarnings("FieldCanBeLocal")
     private static TouchSensor topBump, bottomBump, intakeBump1, intakeBump2;
-    private static ArrayList<CRServo> leds;
+    private static ArrayList<CRServo> LEDs;
 
     //Constants
     public static final double ticPerIn = 254.7;
@@ -112,7 +112,7 @@ public class MMHS26Lib {
         pinpoint.update();
         //LED Config
         CRServo LED1 = hardwareMap.get(CRServo.class, "Led1");
-        leds = new ArrayList<>(Arrays.asList(null, LED1)); //creates a list of LEDs for ledManager to use
+        LEDs = new ArrayList<>(Arrays.asList(null, LED1)); //creates a list of LEDs for ledManager to use
         //Limelight Config/Setup
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(0); //Sets the config the limelight should use
@@ -1094,7 +1094,7 @@ public class MMHS26Lib {
         }
         //Function to manage the color of LED(s) on the robot
         public static void ledManager(String type, int ledNumber) {
-            CRServo led = leds.get(ledNumber);
+            CRServo led = LEDs.get(ledNumber);
             if (led != null) {
                 switch (type) {
                     case "Clear":
@@ -1190,7 +1190,7 @@ public class MMHS26Lib {
                     intakeMotor.setPower(0);
                 }
             }
-            //moves backwards for a certain of tics
+            //moves backwards for a certain number of tics
             private void moveForwardTics(double Speed, double tic) {
                 pinpoint.update();
                 double xvalue = pinpoint.getEncoderX();

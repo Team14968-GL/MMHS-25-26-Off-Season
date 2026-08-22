@@ -19,11 +19,11 @@ import java.util.Arrays;
 public class HWI { //HWI = Hardware Interface
 	private static OpMode OpMode;
 	private LinearOpMode Linear;
-	private boolean debug;
+	private static boolean debug;
 
 	private DcMotorEx leftBack, rightBack, leftFront, rightFront, leftLauncher, rightLauncher, intakeMotor, lift;
 	private CRServo launchLiftRight, launchLiftLeft;
-	private Servo scoop, turnTableServo, backDoor, frontDoor;
+	private Servo scoop, turnTableServo, backDoor, kicker;
 	private GoBildaPinpointDriver pinpoint;
 	private Limelight3A limelight;
 	@SuppressWarnings("FieldCanBeLocal")
@@ -53,7 +53,7 @@ public class HWI { //HWI = Hardware Interface
 		rightFront = OpMode.hardwareMap.get(DcMotorEx.class, "rightFront");
 		//Intake Definitions
 		intakeMotor = OpMode.hardwareMap.get(DcMotorEx.class, "intakeMotor");
-		frontDoor = OpMode.hardwareMap.get(Servo.class, "kicker");
+		kicker = OpMode.hardwareMap.get(Servo.class, "goofyAhhhhFrontDoor");
 		intakeBump1 = OpMode.hardwareMap.get(TouchSensor.class, "intakeBump1");
 		intakeBump2 = OpMode.hardwareMap.get(TouchSensor.class, "intakeBump2");
 		//Launcher Definitions
@@ -139,8 +139,10 @@ public class HWI { //HWI = Hardware Interface
 	}
 
 	public void launcherVelocity(double RPM, double gearRatio, int ticksPerRev) {
-		//converts RPM to the ticks per second required by
+		//Clamps lower bound of gearRatio
+		if (gearRatio <= 0) {gearRatio = 1;}
 		Utils.ifLog(debug, "VelLaunchRPM", String.valueOf(RPM));
+		//converts RPM to the ticks per second required by setVelocity
 		double TPS = ((RPM / 60) * ticksPerRev) / gearRatio;
 		Utils.ifLog(debug, "VelLaunchTPS", String.valueOf(TPS));
 		leftLauncher.setVelocity(TPS);
@@ -149,14 +151,20 @@ public class HWI { //HWI = Hardware Interface
 
 	private static class Utils {
 		private static double clamp(double value, double min, double max) {
+			ifLog(debug, "Utils.clamp",  "Clamping " + String.valueOf(value) + "between " + String.valueOf(min) + " " + String.valueOf(max));
 			if (value < min) {
+				ifLog(debug, "Utils.clamp",  String.valueOf(value) + " clamped at lower bound to " + String.valueOf(min));
 				return min;
 			} else if (value > max) {
+				ifLog(debug, "Utils.clamp",  String.valueOf(value) + " clamped at upper bound to " + String.valueOf(max));
 				return max;
-			} else return value;
+			} else
+				ifLog(debug, "Utils.clamp",  String.valueOf(value) + " fell within expected bounds");
+				return value;
 		}
 		private static void sleep(long milliseconds) {
 			try {
+				ifLog(debug, "Utils.sleep",  "Attempting to sleep for " + String.valueOf(milliseconds/1000) + " seconds");
 				Thread.sleep(milliseconds);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
