@@ -30,12 +30,11 @@ public class HWI { //HWI = Hardware Interface
 	private Servo scoop, turnTableServo, backDoor, kicker;
 	private GoBildaPinpointDriver pinpoint;
 	private Limelight3A limelight;
-	@SuppressWarnings("FieldCanBeLocal")
 	private TouchSensor topBump, bottomBump, intakeBump1, intakeBump2;
 	private ArrayList<CRServo> LEDs;
 	private CRServo LED1;
 	private LLResult llResults;
-	ElapsedTime MSSinceStale = new ElapsedTime();
+	final ElapsedTime MSSinceStale = new ElapsedTime();
 
 
 	//HWI name = new HWI(this);
@@ -168,19 +167,19 @@ public class HWI { //HWI = Hardware Interface
 			MSSinceStale.reset();
 			}
 		}
-		public List getAprilTags() {
+		public List<LLResultTypes.FiducialResult> getAprilTags() {
 			updateResults();
 			return llResults.getFiducialResults();
 		}
-		public List getBarCodes() {
+		public List<LLResultTypes.BarcodeResult> getBarCodes() {
 			updateResults();
 			return llResults.getBarcodeResults();
 		}
-		public List getClassifiers() {
+		public List<LLResultTypes.ClassifierResult> getClassifiers() {
 			updateResults();
 			return llResults.getClassifierResults();
 		}
-		public List getColors() {
+		public List<LLResultTypes.ColorResult> getColors() {
 			updateResults();
 			return llResults.getColorResults();
 		}
