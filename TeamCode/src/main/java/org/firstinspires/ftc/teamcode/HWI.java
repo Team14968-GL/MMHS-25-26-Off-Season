@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,7 +17,9 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+@SuppressWarnings("FieldCanBeLocal")
 public class HWI { //HWI = Hardware Interface
 	private static OpMode OpMode;
 	private LinearOpMode Linear;
@@ -30,6 +34,9 @@ public class HWI { //HWI = Hardware Interface
 	private TouchSensor topBump, bottomBump, intakeBump1, intakeBump2;
 	private ArrayList<CRServo> LEDs;
 	private CRServo LED1;
+	private LLResult llResults;
+	ElapsedTime MSSinceStale = new ElapsedTime();
+
 
 	//HWI name = new HWI(this);
 	public HWI(OpMode This) {
@@ -40,7 +47,7 @@ public class HWI { //HWI = Hardware Interface
 		}
 	}
 	
-	public void DebugMode(boolean isEnabled) {
+	public void debugMode(boolean isEnabled) {
 		debug = isEnabled;
 	}
 
@@ -53,6 +60,7 @@ public class HWI { //HWI = Hardware Interface
 		rightFront = OpMode.hardwareMap.get(DcMotorEx.class, "rightFront");
 		//Intake Definitions
 		intakeMotor = OpMode.hardwareMap.get(DcMotorEx.class, "intakeMotor");
+		//noinspection SpellCheckingInspection
 		kicker = OpMode.hardwareMap.get(Servo.class, "goofyAhhhhFrontDoor");
 		intakeBump1 = OpMode.hardwareMap.get(TouchSensor.class, "intakeBump1");
 		intakeBump2 = OpMode.hardwareMap.get(TouchSensor.class, "intakeBump2");
@@ -120,7 +128,7 @@ public class HWI { //HWI = Hardware Interface
 	}
 
 	public void velocityDrive(double linear, double lateral, double rotational, double RPM , int ticksPerRev, double gearRatio) {
-		Utils.ifLog(debug, "LIN + LAT + ROT + RPM + TPR + GR", String.valueOf(linear) + " " + String.valueOf(lateral) + " " + String.valueOf(rotational) + " " + String.valueOf(RPM) + " " + String.valueOf(ticksPerRev) + " " + String.valueOf(gearRatio));
+		Utils.ifLog(debug, "LIN + LAT + ROT + RPM + TPR + GR", linear + " " + lateral + " " + rotational + " " + RPM + " " + ticksPerRev + " " + gearRatio);
 		linear = Utils.clamp(linear, -1, 1);
 		lateral = Utils.clamp(lateral, -1, 1);
 		rotational = Utils.clamp(rotational, -1, 1);
@@ -149,22 +157,51 @@ public class HWI { //HWI = Hardware Interface
 		rightLauncher.setVelocity(TPS);
 	}
 
+	public class LimeLight {
+		private void updateResults() {
+			LLResult llResultsOld = llResults;
+			llResults = limelight.getLatestResult();
+			if (llResultsOld == llResults) {
+				RobotLog.w("LLSTALE");
+				OpMode.telemetry.addData("Limelight data stale for ", MSSinceStale.milliseconds() + " milliseconds");
+			} else {
+			MSSinceStale.reset();
+			}
+		}
+		public List getAprilTags() {
+			updateResults();
+			return llResults.getFiducialResults();
+		}
+		public List getBarCodes() {
+			updateResults();
+			return llResults.getBarcodeResults();
+		}
+		public List getClassifiers() {
+			updateResults();
+			return llResults.getClassifierResults();
+		}
+		public List getColors() {
+			updateResults();
+			return llResults.getColorResults();
+		}
+	}
+
 	private static class Utils {
 		private static double clamp(double value, double min, double max) {
-			ifLog(debug, "Utils.clamp",  "Clamping " + String.valueOf(value) + "between " + String.valueOf(min) + " " + String.valueOf(max));
+			ifLog(debug, "Utils.clamp",  "Clamping " + value + "between " + min + " " + max);
 			if (value < min) {
-				ifLog(debug, "Utils.clamp",  String.valueOf(value) + " clamped at lower bound to " + String.valueOf(min));
+				ifLog(debug, "Utils.clamp",  value + " clamped at lower bound to " + min);
 				return min;
 			} else if (value > max) {
-				ifLog(debug, "Utils.clamp",  String.valueOf(value) + " clamped at upper bound to " + String.valueOf(max));
+				ifLog(debug, "Utils.clamp",  value + " clamped at upper bound to " + max);
 				return max;
 			} else
-				ifLog(debug, "Utils.clamp",  String.valueOf(value) + " fell within expected bounds");
+				ifLog(debug, "Utils.clamp",  value + " fell within expected bounds");
 				return value;
 		}
 		private static void sleep(long milliseconds) {
 			try {
-				ifLog(debug, "Utils.sleep",  "Attempting to sleep for " + String.valueOf(milliseconds/1000) + " seconds");
+				ifLog(debug, "Utils.sleep",  "Attempting to sleep for " + milliseconds / 1000 + " seconds");
 				Thread.sleep(milliseconds);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();

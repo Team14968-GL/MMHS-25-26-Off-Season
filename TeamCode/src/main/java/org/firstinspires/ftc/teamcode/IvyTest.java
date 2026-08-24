@@ -11,6 +11,7 @@ import com.pedropathing.ivy.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+@SuppressWarnings("unused")
 @TeleOp
 public class IvyTest extends OpMode {
 

@@ -2,16 +2,16 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.teamcode.HWI.*;
-import com.qualcomm.hardware.lynx.commands.standard.LynxSetModuleLEDColorCommand;
 
+@SuppressWarnings("unused")
 @TeleOp
 public class HWIExampleImplementation extends OpMode {
-    HWI robot = new HWI(this);
+    final HWI robot = new HWI(this);
 
     @Override
     public void init() {
         robot.init();
+        robot.debugMode(true);
     }
 
     @Override
