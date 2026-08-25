@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.pedropathing.ivy.Command;
+import com.pedropathing.ivy.Scheduler;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import com.pedropathing.ivy.Scheduler;
-import static com.pedropathing.ivy.commands.Commands.*;
-import static com.pedropathing.ivy.groups.Groups.*;
-import com.pedropathing.ivy.*;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import androidx.annotation.Nullable;
+
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -22,7 +24,6 @@ import java.util.List;
 @SuppressWarnings("FieldCanBeLocal")
 public class HWI { //HWI = Hardware Interface
 	private static OpMode OpMode;
-	private LinearOpMode Linear;
 	private static boolean debug;
 
 	private DcMotorEx leftBack, rightBack, leftFront, rightFront, leftLauncher, rightLauncher, intakeMotor, lift;
@@ -31,16 +32,20 @@ public class HWI { //HWI = Hardware Interface
 	private GoBildaPinpointDriver pinpoint;
 	private Limelight3A limelight;
 	private TouchSensor topBump, bottomBump, intakeBump1, intakeBump2;
-	private ArrayList<CRServo> LEDs;
+	private static ArrayList<CRServo> LEDs;
 	private CRServo LED1;
 	private LLResult llResults;
 	final ElapsedTime MSSinceStale = new ElapsedTime();
 
 
 	//HWI name = new HWI(this);
-	public HWI(OpMode This) {
-		if (This != null) {
-			OpMode = This;
+	public HWI(@Nullable OpMode This, @Nullable LinearOpMode Lin) {
+		if (This != null || Lin != null) {
+			if (This != null) {
+				OpMode = This;
+			} else {
+				OpMode = Lin;
+			}
 		} else {
 			RobotLog.ii("HWI", "OpMode not provided, please check HWI's initialization statement.");
 		}
@@ -186,6 +191,7 @@ public class HWI { //HWI = Hardware Interface
 	}
 
 	private static class Utils {
+		@SuppressWarnings("SameParameterValue")
 		private static double clamp(double value, double min, double max) {
 			ifLog(debug, "Utils.clamp",  "Clamping " + value + "between " + min + " " + max);
 			if (value < min) {
@@ -206,10 +212,13 @@ public class HWI { //HWI = Hardware Interface
 				Thread.currentThread().interrupt();
 			}
 		}
-		private static void ifLog(boolean IF, String caption, String data){
+		private static void ifLog(boolean IF, String caption, String data) {
 			if (IF) {
 				RobotLog.dd(caption, data);
 			}
+		}
+		private static void ledManager(){
+			LEDs.get(1).setPower(.4);
 		}
 	}
 }
