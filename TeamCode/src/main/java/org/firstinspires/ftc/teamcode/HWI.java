@@ -54,7 +54,7 @@ public class HWI { //HWI = Hardware Interface
 			RobotLog.ii("HWI", "OpMode not provided, please check HWI's initialization statement.");
 		}
 	}
-	
+
 	public void debugMode(boolean isEnabled) {
 		debug = isEnabled;
 	}
@@ -135,7 +135,7 @@ public class HWI { //HWI = Hardware Interface
 		rightBack.setPower(((linear - lateral) + rotational) * speed);
 	}
 
-	public void velocityDrive(double linear, double lateral, double rotational, double RPM , int ticksPerRev, double gearRatio) {
+	public void velocityDrive(double linear, double lateral, double rotational, double RPM, int ticksPerRev, double gearRatio) {
 		Utils.ifLog(debug, "LIN + LAT + ROT + RPM + TPR + GR", linear + " " + lateral + " " + rotational + " " + RPM + " " + ticksPerRev + " " + gearRatio);
 		linear = Utils.clamp(linear, -1, 1);
 		lateral = Utils.clamp(lateral, -1, 1);
@@ -156,7 +156,9 @@ public class HWI { //HWI = Hardware Interface
 
 	public void launcherVelocity(double RPM, double gearRatio, int ticksPerRev) {
 		//Clamps lower bound of gearRatio
-		if (gearRatio <= 0) {gearRatio = 1;}
+		if (gearRatio <= 0) {
+			gearRatio = 1;
+		}
 		Utils.ifLog(debug, "VelLaunchRPM", String.valueOf(RPM));
 		//converts RPM to the ticks per second required by setVelocity
 		double TPS = ((RPM / 60) * ticksPerRev) / gearRatio;
@@ -166,9 +168,13 @@ public class HWI { //HWI = Hardware Interface
 	}
 
 	public class pinpoint {
-		public Pose2D locate () {
+		public Pose2D locate() {
 			pinpoint.update();
 			return new Pose2D(DistanceUnit.MM, pinpoint.getPosX(DistanceUnit.MM), pinpoint.getPosY(DistanceUnit.MM), AngleUnit.DEGREES, pinpoint.getHeading(AngleUnit.DEGREES));
+		}
+
+		public void setPos(Pose2D pose) {
+			pinpoint.setPosition(pose);
 		}
 	}
 
@@ -180,21 +186,25 @@ public class HWI { //HWI = Hardware Interface
 				RobotLog.w("LLSTALE");
 				OpMode.telemetry.addData("Limelight data stale for ", MSSinceStale.milliseconds() + " milliseconds");
 			} else {
-			MSSinceStale.reset();
+				MSSinceStale.reset();
 			}
 		}
+
 		public List<LLResultTypes.FiducialResult> getAprilTags() {
 			updateResults();
 			return llResults.getFiducialResults();
 		}
+
 		public List<LLResultTypes.BarcodeResult> getBarCodes() {
 			updateResults();
 			return llResults.getBarcodeResults();
 		}
+
 		public List<LLResultTypes.ClassifierResult> getClassifiers() {
 			updateResults();
 			return llResults.getClassifierResults();
 		}
+
 		public List<LLResultTypes.ColorResult> getColors() {
 			updateResults();
 			return llResults.getColorResults();
@@ -204,31 +214,34 @@ public class HWI { //HWI = Hardware Interface
 	private static class Utils {
 		@SuppressWarnings("SameParameterValue")
 		private static double clamp(double value, double min, double max) {
-			ifLog(debug, "Utils.clamp",  "Clamping " + value + "between " + min + " " + max);
+			ifLog(debug, "Utils.clamp", "Clamping " + value + "between " + min + " " + max);
 			if (value < min) {
-				ifLog(debug, "Utils.clamp",  value + " clamped at lower bound to " + min);
+				ifLog(debug, "Utils.clamp", value + " clamped at lower bound to " + min);
 				return min;
 			} else if (value > max) {
-				ifLog(debug, "Utils.clamp",  value + " clamped at upper bound to " + max);
+				ifLog(debug, "Utils.clamp", value + " clamped at upper bound to " + max);
 				return max;
 			} else
-				ifLog(debug, "Utils.clamp",  value + " fell within expected bounds");
-				return value;
+				ifLog(debug, "Utils.clamp", value + " fell within expected bounds");
+			return value;
 		}
+
 		private static void sleep(long milliseconds) {
 			try {
-				ifLog(debug, "Utils.sleep",  "Attempting to sleep for " + milliseconds / 1000 + " seconds");
+				ifLog(debug, "Utils.sleep", "Attempting to sleep for " + milliseconds / 1000 + " seconds");
 				Thread.sleep(milliseconds);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 			}
 		}
+
 		private static void ifLog(boolean IF, String caption, String data) {
 			if (IF) {
 				RobotLog.dd(caption, data);
 			}
 		}
-		private static void ledManager(){
+
+		private static void ledManager() {
 			LEDs.get(1).setPower(.4);
 		}
 	}
