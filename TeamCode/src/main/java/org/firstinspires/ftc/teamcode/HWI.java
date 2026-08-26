@@ -235,8 +235,8 @@ public class HWI { //HWI = Hardware Interface
 			}
 		}
 
-		private static void ifLog(boolean IF, String caption, String data) {
-			if (IF) {
+		private static void ifLog(boolean bool, String caption, String data) {
+			if (bool) {
 				RobotLog.dd(caption, data);
 			}
 		}

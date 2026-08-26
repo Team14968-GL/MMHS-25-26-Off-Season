@@ -32,7 +32,6 @@ public class IvyTest extends OpMode {
 				.requiring(leftLauncher, rightLauncher);
 
 
-
 		Scheduler.schedule(raiseArm);
 	}
 
@@ -42,10 +41,12 @@ public class IvyTest extends OpMode {
 		isScheduled(raiseArm);
 
 	}
-	private void launcher(double Power){
+
+	private void launcher(double Power) {
 		leftLauncher.setPower(Power);
 		rightLauncher.setPower(Power);
 	}
+
 	private void isScheduled(Command command) {
 		if (command.isScheduled()) {
 			telemetry.addData(command.toString(), command.isScheduled());
