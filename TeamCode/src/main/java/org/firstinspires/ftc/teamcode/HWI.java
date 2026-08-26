@@ -17,6 +17,10 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -159,6 +163,13 @@ public class HWI { //HWI = Hardware Interface
 		Utils.ifLog(debug, "VelLaunchTPS", String.valueOf(TPS));
 		leftLauncher.setVelocity(TPS);
 		rightLauncher.setVelocity(TPS);
+	}
+
+	public class pinpoint {
+		public Pose2D locate () {
+			pinpoint.update();
+			return new Pose2D(DistanceUnit.MM, pinpoint.getPosX(DistanceUnit.MM), pinpoint.getPosY(DistanceUnit.MM), AngleUnit.DEGREES, pinpoint.getHeading(AngleUnit.DEGREES));
+		}
 	}
 
 	public class LimeLight {
