@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("unused")
 @TeleOp
@@ -32,5 +36,10 @@ public class HWIExampleImplementation extends OpMode {
 		}
 		telemetry.addData("", robot.getPose3D());
 		telemetry.update();
+		ArrayList<Integer> m = null;
+		robot.getAprilTags().toArray();
+		if (m.contains(25)) {
+
+		}
 	}
 }
