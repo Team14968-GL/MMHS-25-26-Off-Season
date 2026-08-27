@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@SuppressWarnings("unused")
 @TeleOp(name = "Main TeleOp")
 public class MainTeleOp extends LinearOpMode {
     Limelight3A limelight;
@@ -35,7 +36,7 @@ public class MainTeleOp extends LinearOpMode {
     int id;
 
     DcMotor intakeMotor;
-    Servo goofyAhhhhFrontDoor;
+    Servo kicker;
     DcMotor leftBack;
     DcMotor rightBack;
     DcMotor leftFront;
@@ -65,7 +66,7 @@ public class MainTeleOp extends LinearOpMode {
     int ballCount = 0;
     int ballTrig = 0;
 
-    int motiff = 1;
+    int motif = 1;
     int manualMotif = 1;
     double speed = 0;
 
@@ -77,10 +78,10 @@ public class MainTeleOp extends LinearOpMode {
     ElapsedTime ReKickClock = new ElapsedTime();
     ElapsedTime ScoopClock = new ElapsedTime();
     ElapsedTime LaunchClock = new ElapsedTime();
-    ElapsedTime LaunchMotiffClock = new ElapsedTime();
+    ElapsedTime LaunchMotifClock = new ElapsedTime();
     ElapsedTime intake3BallsClock = new ElapsedTime();
 
-    int LaunchMotiffTrig = 0;
+    int LaunchMotifTrig = 0;
     int LaunchTrig = 0;
     int RekickTrig = 0;
     int scoopTrig = 0;
@@ -110,7 +111,7 @@ public class MainTeleOp extends LinearOpMode {
     public void runOpMode() {
 
         intakeMotor = hardwareMap.get(DcMotor.class, "intakeMotor");
-        goofyAhhhhFrontDoor = hardwareMap.get(Servo.class, "goofyAhhhhFrontDoor");
+        kicker = hardwareMap.get(Servo.class, "goofyAhhhhFrontDoor");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
@@ -166,7 +167,7 @@ public class MainTeleOp extends LinearOpMode {
         waitForStart();
         speed = 0.75;
         backDoor.setPosition(1);
-        goofyAhhhhFrontDoor.setPosition(0.5);
+        kicker.setPosition(0.5);
         scoop.setPosition(1);
         turnTableServo.setPosition(0.5);
         turnTablePos2 = 0;
@@ -197,7 +198,7 @@ public class MainTeleOp extends LinearOpMode {
                 timeReKick();
                 timeScoop();
                 controlLauncher();
-                goofyAhhhhFrontDoorControl();
+                kickerControl();
                 launcherTiltControl();
                 //distanceSensorControl();
                 killSwitch();
@@ -215,7 +216,7 @@ public class MainTeleOp extends LinearOpMode {
                 if (manualMotif != 3) {
                     timeLaunchMotif(manualMotif, launcherSpeed);
                 } else {
-                    timeLaunchMotif(motiff, launcherSpeed);
+                    timeLaunchMotif(motif, launcherSpeed);
                 }
 
                 if (motifTrig == 1 && manualMotif == 3) {
@@ -232,15 +233,15 @@ public class MainTeleOp extends LinearOpMode {
     private void checkID() {
         for (int idd : IDs) {
             if (idd == 21){
-                motiff = 0;
+                motif = 0;
                 gamepad1.rumbleBlips(2);
                 motifTrig = 0;
             } else if (idd == 22) {
-                motiff = 1;
+                motif = 1;
                 gamepad1.rumbleBlips(2);
                 motifTrig = 0;
             } else if (idd == 23) {
-                motiff = 2;
+                motif = 2;
                 gamepad1.rumbleBlips(2);
                 motifTrig = 0;
             }
@@ -251,7 +252,7 @@ public class MainTeleOp extends LinearOpMode {
     private void intakeControl() {
         if (gamepad1.left_trigger == 1) {
             intakeMotor.setPower(0.8);
-            goofyAhhhhFrontDoor.setPosition(1);
+            kicker.setPosition(1);
         } else if (gamepad1.right_trigger == 1) {
             intakeMotor.setPower(0);
         }
@@ -302,13 +303,13 @@ public class MainTeleOp extends LinearOpMode {
         }
     }
 
-    private void goofyAhhhhFrontDoorControl() {
+    private void kickerControl() {
         if (gamepad1.squareWasReleased()) {
-            goofyAhhhhFrontDoor.setPosition(1);
+            kicker.setPosition(1);
         } else if (gamepad1.circleWasReleased()) {
-            goofyAhhhhFrontDoor.setPosition(0);
+            kicker.setPosition(0);
         } else if (gamepad1.crossWasReleased()) {
-            goofyAhhhhFrontDoor.setPosition(0.5);
+            kicker.setPosition(0.5);
         }
     }
 
@@ -322,21 +323,21 @@ public class MainTeleOp extends LinearOpMode {
     }
 
     private void turnTablePos() {
-        if (gamepad2.leftBumperWasPressed() && 0 != goofyAhhhhFrontDoor.getPosition()) {
+        if (gamepad2.leftBumperWasPressed() && 0 != kicker.getPosition()) {
             turnTablePos2 += 0.5;
             if (1.5 <= turnTablePos2) {
                 turnTablePos2 = 0;
             }
             turnTableServo.setPosition(turnTablePos2);
         }
-        if (gamepad2.rightBumperWasPressed() && 0 != goofyAhhhhFrontDoor.getPosition()) {
+        if (gamepad2.rightBumperWasPressed() && 0 != kicker.getPosition()) {
             turnTablePos2 -= 0.5;
             if (-0.5 >= turnTablePos2) {
                 turnTablePos2 = 1;
             }
             turnTableServo.setPosition(turnTablePos2);
         }
-        if (gamepad2.psWasPressed() && 0 != goofyAhhhhFrontDoor.getPosition()) {
+        if (gamepad2.psWasPressed() && 0 != kicker.getPosition()) {
             turnTablePos2 = 0;
             turnTableServo.setPosition(turnTablePos2);
         }
@@ -368,11 +369,11 @@ public class MainTeleOp extends LinearOpMode {
         }
         if (RekickTrig == 1) {
             if (ReKickClock.seconds() >= 0 && ReKickClock.seconds() <= 0.75) {
-                goofyAhhhhFrontDoor.setPosition(0);
+                kicker.setPosition(0);
                 telemetry.update();
             }
             if (ReKickClock.seconds() >= 0.75 && ReKickClock.seconds() <= 1) {
-                goofyAhhhhFrontDoor.setPosition(0.5);
+                kicker.setPosition(0.5);
                 telemetry.update();
                 RekickTrig = 0;
             }
@@ -400,12 +401,12 @@ public class MainTeleOp extends LinearOpMode {
             }
             if (triangleClock.seconds() >= 0.5 && triangleClock.seconds() <= 1.5) {
                 launchMotorOnTriangle();
-                goofyAhhhhFrontDoor.setPosition(0);
+                kicker.setPosition(0);
                 telemetry.update();
             }
             if (triangleClock.seconds() >= 1.5 && triangleClock.seconds() <= 2) {
                 launchMotorOnTriangle();
-                goofyAhhhhFrontDoor.setPosition(0.5);
+                kicker.setPosition(0.5);
                 scoop.setPosition(0.5);
                 telemetry.update();
             }
@@ -506,12 +507,12 @@ public class MainTeleOp extends LinearOpMode {
                     ledManager("Clear");
                     LocalTrig = 1;
                 } else if (ty < tyMin) {
-                    //strafe in a direction (i think )
+                    //strafe in a direction (I think )
                     strafeRight(localizerMotorPower, sleepTimeMilli);
                     ledManager("Clear");
                     LocalTrig = 1;
                 } else if (ty > tyMax) {
-                    //strafe in a direction (i think left)
+                    //strafe in a direction (I think left)
                     strafeLeft(localizerMotorPower, sleepTimeMilli);
                     ledManager("Clear");
                     LocalTrig = 1;
@@ -676,103 +677,103 @@ public class MainTeleOp extends LinearOpMode {
         }
     }
 
-    private void timeLaunchMotif(int motiff, double launcherSpeedd) {
+    private void timeLaunchMotif(int motif, double Speed) {
 
         if (gamepad2.crossWasReleased()) {
-            LaunchMotiffClock.reset();
-            telemetry.addData("Elapsed Time", LaunchMotiffClock.seconds());
-            LaunchMotiffTrig = 1;
+            LaunchMotifClock.reset();
+            telemetry.addData("Elapsed Time", LaunchMotifClock.seconds());
+            LaunchMotifTrig = 1;
             launchAbort = false;
             telemetry.update();
         }
-        if (LaunchMotiffTrig == 1 && !launchAbort) {
-            if (LaunchMotiffClock.seconds() >= 0 && LaunchMotiffClock.seconds() <= 0.75) {
+        if (LaunchMotifTrig == 1 && !launchAbort) {
+            if (LaunchMotifClock.seconds() >= 0 && LaunchMotifClock.seconds() <= 0.75) {
                 ledManager("Alert");
-                launchMotorOn(launcherSpeedd);
+                launchMotorOn(Speed);
                 backDoor.setPosition(0);
-                turnTableServo.setPosition(0); //motifArray.get(motiff*3)
+                turnTableServo.setPosition(0); //motifArray.get(motif*3)
                 telemetry.update();
             }
-            if (LaunchMotiffClock.seconds() >= 0.75 && LaunchMotiffClock.seconds() <= 1) {
+            if (LaunchMotifClock.seconds() >= 0.75 && LaunchMotifClock.seconds() <= 1) {
 
                 //backDoor.setPosition(0);
                 telemetry.update();
             }
-            if (LaunchMotiffClock.seconds() >= 1 && LaunchMotiffClock.seconds() <= 1.75) {
-                goofyAhhhhFrontDoor.setPosition(0);
+            if (LaunchMotifClock.seconds() >= 1 && LaunchMotifClock.seconds() <= 1.75) {
+                kicker.setPosition(0);
                 telemetry.update();
 
             }
-            if (LaunchMotiffClock.seconds() >= 1.75 && LaunchMotiffClock.seconds() <= 1.85) {
-                goofyAhhhhFrontDoor.setPosition(0.5);
+            if (LaunchMotifClock.seconds() >= 1.75 && LaunchMotifClock.seconds() <= 1.85) {
+                kicker.setPosition(0.5);
                 telemetry.update();
 
             }
-            if (LaunchMotiffClock.seconds() >= 1.85 && LaunchMotiffClock.seconds() <= 2.35) {
+            if (LaunchMotifClock.seconds() >= 1.85 && LaunchMotifClock.seconds() <= 2.35) {
                 //backDoor.setPosition(1);
-                goofyAhhhhFrontDoor.setPosition(0.5);
+                kicker.setPosition(0.5);
                 scoop.setPosition(0.5);
 
-                turnTableServo.setPosition(.5); //motifArray.get((motiff*3)+1)
+                turnTableServo.setPosition(.5); //motifArray.get((motif*3)+1)
                 telemetry.update();
             }
 
 
-            if (LaunchMotiffClock.seconds() >= 2.35 && LaunchMotiffClock.seconds() <= 2.6) {
+            if (LaunchMotifClock.seconds() >= 2.35 && LaunchMotifClock.seconds() <= 2.6) {
                 scoop.setPosition(1);
                 backDoor.setPosition(0);
                 telemetry.update();
             }
-            if (LaunchMotiffClock.seconds() >= 2.6 && LaunchMotiffClock.seconds() <= 3.35) {
-                goofyAhhhhFrontDoor.setPosition(0);
+            if (LaunchMotifClock.seconds() >= 2.6 && LaunchMotifClock.seconds() <= 3.35) {
+                kicker.setPosition(0);
                 telemetry.update();
 
             }
-            if (LaunchMotiffClock.seconds() >= 3.35 && LaunchMotiffClock.seconds() <= 3.45) {
-                goofyAhhhhFrontDoor.setPosition(0.5);
+            if (LaunchMotifClock.seconds() >= 3.35 && LaunchMotifClock.seconds() <= 3.45) {
+                kicker.setPosition(0.5);
                 telemetry.update();
 
             }
-            if (LaunchMotiffClock.seconds() >= 3.45 && LaunchMotiffClock.seconds() <= 3.95) {
+            if (LaunchMotifClock.seconds() >= 3.45 && LaunchMotifClock.seconds() <= 3.95) {
                 //backDoor.setPosition(1);
-                goofyAhhhhFrontDoor.setPosition(0.5);
+                kicker.setPosition(0.5);
                 scoop.setPosition(0.5);
 
-                turnTableServo.setPosition(1); //motifArray.get((motiff*3)+2
+                turnTableServo.setPosition(1); //motifArray.get((motif*3)+2
                 telemetry.update();
             }
 
 
-            if (LaunchMotiffClock.seconds() >= 3.95 && LaunchMotiffClock.seconds() <= 4.2) {
+            if (LaunchMotifClock.seconds() >= 3.95 && LaunchMotifClock.seconds() <= 4.2) {
                 scoop.setPosition(1);
                 backDoor.setPosition(0);
                 telemetry.update();
             }
-            if (LaunchMotiffClock.seconds() >= 4.2 && LaunchMotiffClock.seconds() <= 4.95) {
-                goofyAhhhhFrontDoor.setPosition(0);
+            if (LaunchMotifClock.seconds() >= 4.2 && LaunchMotifClock.seconds() <= 4.95) {
+                kicker.setPosition(0);
                 telemetry.update();
 
             }
-            if (LaunchMotiffClock.seconds() >= 4.95 && LaunchMotiffClock.seconds() <= 5.05) {
-                goofyAhhhhFrontDoor.setPosition(0.5);
+            if (LaunchMotifClock.seconds() >= 4.95 && LaunchMotifClock.seconds() <= 5.05) {
+                kicker.setPosition(0.5);
                 telemetry.update();
 
             }
-            if (LaunchMotiffClock.seconds() >= 5.05 && LaunchMotiffClock.seconds() <= 5.55) {
+            if (LaunchMotifClock.seconds() >= 5.05 && LaunchMotifClock.seconds() <= 5.55) {
 
-                goofyAhhhhFrontDoor.setPosition(0.5);
+                kicker.setPosition(0.5);
                 scoop.setPosition(0.5);
 
                 telemetry.update();
             }
-            if (LaunchMotiffClock.seconds() >= 5.55 && LaunchMotiffClock.seconds() <= 6.05) {
+            if (LaunchMotifClock.seconds() >= 5.55 && LaunchMotifClock.seconds() <= 6.05) {
                 scoop.setPosition(1);
                 backDoor.setPosition(1);
                 turnTableServo.setPosition(0);
                 launchMotorOff();
                 telemetry.update();
                 ledManager("Null");
-                LaunchMotiffTrig = 0;
+                LaunchMotifTrig = 0;
             }
         }
 
@@ -840,9 +841,9 @@ public class MainTeleOp extends LinearOpMode {
         }
     }
 
-    private void launchMotorOn(double launcherSpeedd) {
-        ((DcMotorEx) leftLauncher).setVelocity(launcherSpeedd);
-        ((DcMotorEx) rightLauncher).setVelocity(launcherSpeedd);
+    private void launchMotorOn(double Speed) {
+        ((DcMotorEx) leftLauncher).setVelocity(Speed);
+        ((DcMotorEx) rightLauncher).setVelocity(Speed);
 
 
     }
@@ -886,7 +887,7 @@ public class MainTeleOp extends LinearOpMode {
         if (gamepad1.triangleWasPressed()) {
 
             turnTableServo.setPosition(0);
-            //goofyAhhhhFrontDoor.setPosition(1);
+            //kicker.setPosition(1);
             intakeOn();
             intake3BallsClock.reset();
             intakeCount = 1;
@@ -909,54 +910,54 @@ public class MainTeleOp extends LinearOpMode {
             intake3BallsClock.reset();
         }
 
-        if (ballCount == 1 && gamepad1.triangle == true && ballTrig == 1) {
+        if (ballCount == 1 && gamepad1.triangle && ballTrig == 1) {
 
 
-            if (intake3BallsClock.seconds() >= 0 && intake3BallsClock.seconds() <= .500 && gamepad1.triangle == true) {
-                goofyAhhhhFrontDoor.setPosition(0);
+            if (intake3BallsClock.seconds() >= 0 && intake3BallsClock.seconds() <= .500 && gamepad1.triangle) {
+                kicker.setPosition(0);
             }
 
-            if (intake3BallsClock.seconds() >= .500 && intake3BallsClock.seconds() <= .510 && gamepad1.triangle == true) {
-                goofyAhhhhFrontDoor.setPosition(.5);
+            if (intake3BallsClock.seconds() >= .500 && intake3BallsClock.seconds() <= .510 && gamepad1.triangle) {
+                kicker.setPosition(.5);
             }
 
-            if (intake3BallsClock.seconds() >= .510 && intake3BallsClock.seconds() <= .550 && gamepad1.triangle == true) {
+            if (intake3BallsClock.seconds() >= .510 && intake3BallsClock.seconds() <= .550 && gamepad1.triangle) {
                 turnTableServo.setPosition(0.5);
-                goofyAhhhhFrontDoor.setPosition(1);
+                kicker.setPosition(1);
                 intakeCount = 2;
                 ballTrig = 0;
             }
-        } else if (ballCount == 2 && gamepad1.triangle == true && ballTrig == 1) {
+        } else if (ballCount == 2 && gamepad1.triangle && ballTrig == 1) {
 
-            if (intake3BallsClock.seconds() >= 0 && intake3BallsClock.seconds() <= .500 && gamepad1.triangle == true) {
-                goofyAhhhhFrontDoor.setPosition(0);
+            if (intake3BallsClock.seconds() >= 0 && intake3BallsClock.seconds() <= .500 && gamepad1.triangle) {
+                kicker.setPosition(0);
             }
 
-            if (intake3BallsClock.seconds() >= .500 && intake3BallsClock.seconds() <= .510 && gamepad1.triangle == true) {
-                goofyAhhhhFrontDoor.setPosition(.5);
+            if (intake3BallsClock.seconds() >= .500 && intake3BallsClock.seconds() <= .510 && gamepad1.triangle) {
+                kicker.setPosition(.5);
             }
 
-            if (intake3BallsClock.seconds() >= .510 && intake3BallsClock.seconds() <= .550 && gamepad1.triangle == true) {
+            if (intake3BallsClock.seconds() >= .510 && intake3BallsClock.seconds() <= .550 && gamepad1.triangle) {
                 turnTableServo.setPosition(1);
-                goofyAhhhhFrontDoor.setPosition(1);
+                kicker.setPosition(1);
                 intakeCount = 3;
                 ballTrig = 0;
             }
 
 
-        } else if (ballCount == 3 && gamepad1.triangle == true && ballTrig == 1) {
+        } else if (ballCount == 3 && gamepad1.triangle && ballTrig == 1) {
 
-            if (intake3BallsClock.seconds() >= 0 && intake3BallsClock.seconds() <= .500 && gamepad1.triangle == true) {
-                goofyAhhhhFrontDoor.setPosition(0);
+            if (intake3BallsClock.seconds() >= 0 && intake3BallsClock.seconds() <= .500 && gamepad1.triangle) {
+                kicker.setPosition(0);
             }
 
-            if (intake3BallsClock.seconds() >= .500 && intake3BallsClock.seconds() <= .510 && gamepad1.triangle == true) {
-                goofyAhhhhFrontDoor.setPosition(.5);
+            if (intake3BallsClock.seconds() >= .500 && intake3BallsClock.seconds() <= .510 && gamepad1.triangle) {
+                kicker.setPosition(.5);
             }
 
-            if (intake3BallsClock.seconds() >= .510 && intake3BallsClock.seconds() <= .550 && gamepad1.triangle == true) {
+            if (intake3BallsClock.seconds() >= .510 && intake3BallsClock.seconds() <= .550 && gamepad1.triangle) {
                 turnTableServo.setPosition(1);
-                goofyAhhhhFrontDoor.setPosition(.5);
+                kicker.setPosition(.5);
                 intakeCount = 3;
                 ballTrig = 0;
                 intakeOff();
@@ -967,7 +968,7 @@ public class MainTeleOp extends LinearOpMode {
         }
         if (gamepad1.triangleWasReleased()) {
             intakeCount = 0;
-            goofyAhhhhFrontDoor.setPosition(.5);
+            kicker.setPosition(.5);
             intakeOff();
             safeTrig = true;
             resetTrig = false;
@@ -978,47 +979,47 @@ public class MainTeleOp extends LinearOpMode {
         if (intakeCount == 1 && (!intakeBump1.isPressed() || intakeBump2.isPressed()) && gamepad1.triangle == true) {
             intake3BallsClock.reset();
             if (intake3BallsClock.seconds() >= 0 && intake3BallsClock.seconds() <= .500 && gamepad1.triangle == true) {
-                goofyAhhhhFrontDoor.setPosition(0);
+                kicker.setPosition(0);
             }
 
             if (intake3BallsClock.seconds() >= .500 && intake3BallsClock.seconds() <= .510 && gamepad1.triangle == true) {
-                goofyAhhhhFrontDoor.setPosition(.5);
+                kicker.setPosition(.5);
             }
 
             if (intake3BallsClock.seconds() >= .510 && intake3BallsClock.seconds() <= .550 && gamepad1.triangle == true) {
                 turnTableServo.setPosition(0.5);
-                goofyAhhhhFrontDoor.setPosition(1);
+                kicker.setPosition(1);
                 intakeCount = 2;
             }
 
         } else if (intakeCount == 2 && (!intakeBump1.isPressed() || intakeBump2.isPressed()) && gamepad1.triangle == true) {
             intake3BallsClock.reset();
             if (intake3BallsClock.seconds() >= 0 && intake3BallsClock.seconds() <= .500 && gamepad1.triangle == true) {
-                goofyAhhhhFrontDoor.setPosition(0);
+                kicker.setPosition(0);
             }
 
             if (intake3BallsClock.seconds() >= .500 && intake3BallsClock.seconds() <= .510 && gamepad1.triangle == true) {
-                goofyAhhhhFrontDoor.setPosition(.5);
+                kicker.setPosition(.5);
             }
 
             if (intake3BallsClock.seconds() >= .510 && intake3BallsClock.seconds() <= .550 && gamepad1.triangle == true) {
                 turnTableServo.setPosition(1);
-                goofyAhhhhFrontDoor.setPosition(1);
+                kicker.setPosition(1);
                 intakeCount = 3;
             }
         } else if (intakeCount == 3 && (!intakeBump1.isPressed() || intakeBump2.isPressed()) && gamepad1.triangle == true) {
             intake3BallsClock.reset();
             if (intake3BallsClock.seconds() >= 0 && intake3BallsClock.seconds() <= .500 && gamepad1.triangle == true) {
-                goofyAhhhhFrontDoor.setPosition(0);
+                kicker.setPosition(0);
             }
 
             if (intake3BallsClock.seconds() >= .500 && intake3BallsClock.seconds() <= .510 && gamepad1.triangle == true) {
-                goofyAhhhhFrontDoor.setPosition(.5);
+                kicker.setPosition(.5);
             }
 
             if (intake3BallsClock.seconds() >= .510 && intake3BallsClock.seconds() <= .550 && gamepad1.triangle == true) {
                 turnTableServo.setPosition(1);
-                goofyAhhhhFrontDoor.setPosition(.5);
+                kicker.setPosition(.5);
                 intakeCount = 0;
                 intakeOff();
             }
@@ -1028,7 +1029,7 @@ public class MainTeleOp extends LinearOpMode {
 
             if (gamepad1.triangle == false && resetTrig == true) {
                 intakeCount = 0;
-                goofyAhhhhFrontDoor.setPosition(.5);
+                kicker.setPosition(.5);
                 intakeOff();
                 safeTrig = true;
                 resetTrig = false;
