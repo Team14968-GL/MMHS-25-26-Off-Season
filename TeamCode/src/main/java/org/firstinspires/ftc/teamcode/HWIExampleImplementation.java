@@ -30,5 +30,7 @@ public class HWIExampleImplementation extends OpMode {
 		} else {
 			robot.launcherVelocity(0, 1, 28);
 		}
+		telemetry.addData("", robot.getPose3D());
+		telemetry.update();
 	}
 }

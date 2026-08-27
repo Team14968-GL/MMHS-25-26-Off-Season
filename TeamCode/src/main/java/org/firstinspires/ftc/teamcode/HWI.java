@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -167,49 +168,55 @@ public class HWI { //HWI = Hardware Interface
 		rightLauncher.setVelocity(TPS);
 	}
 
-	public class pinpoint {
-		public Pose2D locate() {
-			pinpoint.update();
-			return new Pose2D(DistanceUnit.MM, pinpoint.getPosX(DistanceUnit.MM), pinpoint.getPosY(DistanceUnit.MM), AngleUnit.DEGREES, pinpoint.getHeading(AngleUnit.DEGREES));
-		}
 
-		public void setPos(Pose2D pose) {
-			pinpoint.setPosition(pose);
+	public Pose2D locate() {
+		pinpoint.update();
+		return new Pose2D(DistanceUnit.MM, pinpoint.getPosX(DistanceUnit.MM), pinpoint.getPosY(DistanceUnit.MM), AngleUnit.DEGREES, pinpoint.getHeading(AngleUnit.DEGREES));
+	}
+
+	public void setPos(Pose2D pose) {
+		pinpoint.setPosition(pose);
+	}
+
+
+	private void updateResults() {
+		LLResult llResultsOld = llResults;
+		llResults = limelight.getLatestResult();
+		if (llResultsOld == llResults) {
+			RobotLog.w("LLSTALE");
+			OpMode.telemetry.addData("Limelight data stale for ", limelight.getTimeSinceLastUpdate() + " milliseconds");
 		}
 	}
 
-	public class LimeLight {
-		private void updateResults() {
-			LLResult llResultsOld = llResults;
-			llResults = limelight.getLatestResult();
-			if (llResultsOld == llResults) {
-				RobotLog.w("LLSTALE");
-				OpMode.telemetry.addData("Limelight data stale for ", MSSinceStale.milliseconds() + " milliseconds");
-			} else {
-				MSSinceStale.reset();
-			}
-		}
 
-		public List<LLResultTypes.FiducialResult> getAprilTags() {
-			updateResults();
-			return llResults.getFiducialResults();
+	public Pose3D getPose3D() {
+		if (limelight.getLatestResult().getBotposeTagCount() <= 1) {
+			RobotLog.ww("LimeLight.positioning.getPose3D", "Tag count under threshold");
 		}
-
-		public List<LLResultTypes.BarcodeResult> getBarCodes() {
-			updateResults();
-			return llResults.getBarcodeResults();
-		}
-
-		public List<LLResultTypes.ClassifierResult> getClassifiers() {
-			updateResults();
-			return llResults.getClassifierResults();
-		}
-
-		public List<LLResultTypes.ColorResult> getColors() {
-			updateResults();
-			return llResults.getColorResults();
-		}
+		return limelight.getLatestResult().getBotpose();
 	}
+
+
+	public List<LLResultTypes.FiducialResult> getAprilTags() {
+		updateResults();
+		return llResults.getFiducialResults();
+	}
+
+	public List<LLResultTypes.BarcodeResult> getBarCodes() {
+		updateResults();
+		return llResults.getBarcodeResults();
+	}
+
+	public List<LLResultTypes.ClassifierResult> getClassifiers() {
+		updateResults();
+		return llResults.getClassifierResults();
+	}
+
+	public List<LLResultTypes.ColorResult> getColors() {
+		updateResults();
+		return llResults.getColorResults();
+	}
+
 
 	private static class Utils {
 		@SuppressWarnings("SameParameterValue")
