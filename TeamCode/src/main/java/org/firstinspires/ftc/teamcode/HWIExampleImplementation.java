@@ -36,10 +36,11 @@ public class HWIExampleImplementation extends OpMode {
 		}
 		telemetry.addData("", robot.getPose3D());
 		telemetry.update();
-		ArrayList<Integer> m = null;
+		ArrayList<Integer> m = new ArrayList<>();
 		robot.getAprilTags().toArray();
 		if (m.contains(25)) {
-
+			telemetry.addData("i can see", "25");
+			telemetry.update();
 		}
 	}
 }
