@@ -166,6 +166,9 @@ public class HWI { //HWI = Hardware Interface
 		Utils.ifLog(debug, "VelLaunchTPS", String.valueOf(TPS));
 		leftLauncher.setVelocity(TPS);
 		rightLauncher.setVelocity(TPS);
+		if  (TPS == 1) {
+			launcherVelocity(60, gearRatio, ticksPerRev);
+		}
 	}
 
 
